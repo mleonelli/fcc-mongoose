@@ -89,8 +89,8 @@ var Person = mongoose.model('Person', personSchema);
 var createAndSavePerson = function(done) {
   var mario = new Person({ name: 'Mario', age: 18, favoriteFoods: ['Apple', 'Fish'] });
   mario.save((err, data)=>{
-    if (err) return done(err)
-    return done(null, data)
+    if (err) return done(err);
+    return done(null, data);
  });
 
 };
@@ -105,8 +105,10 @@ var createAndSavePerson = function(done) {
 // 'arrayOfPeople'.
 
 var createManyPeople = function(arrayOfPeople, done) {
-    
-    done(null/*, data*/);
+    Person.create(arrayOfPeople, (err, data)=>{
+    if (err) return done(err);
+    return done(null, data);
+    });
     
 };
 
@@ -122,9 +124,7 @@ var createManyPeople = function(arrayOfPeople, done) {
 // Use the function argument `personName` as search key.
 
 var findPeopleByName = function(personName, done) {
-  
-  done(null/*, data*/);
-
+  Person.find({ name: personName }).exec(done);
 };
 
 /** 6) Use `Model.findOne()` */
@@ -138,7 +138,11 @@ var findPeopleByName = function(personName, done) {
 
 var findOneByFood = function(food, done) {
 
-  done(null/*, data*/);
+  Person.findOne({ favoriteFoods : food }, function(err, data){
+                    if(err){
+                        console.log("Something wrong when updating record!");
+                    }
+                    return done(null, data)});
   
 };
 
@@ -153,7 +157,11 @@ var findOneByFood = function(food, done) {
 
 var findPersonById = function(personId, done) {
   
-  done(null/*, data*/);
+  Person.findById(personId, function(err, data){
+                    if(err){
+                        console.log("Something wrong when updating record!");
+                    }
+                    return done(null, data)});
   
 };
 
@@ -184,8 +192,17 @@ var findPersonById = function(personId, done) {
 
 var findEditThenSave = function(personId, done) {
   var foodToAdd = 'hamburger';
-  
-  done(null/*, data*/);
+  Person.findById(personId, function(err, data){
+                    if(err){
+                        console.log("Something wrong when updating record!");
+                    }
+                    data.favoriteFoods.push(foodToAdd);
+                    data.save((err, data)=>{
+                      if (err) return done(err);
+                      return done(null, data);
+                   });
+ 
+})
 };
 
 /** 9) New Update : Use `findOneAndUpdate()` */
